@@ -9,6 +9,7 @@ import (
 
 type membershipService interface {
 	SignUp(ctx context.Context, request memberships.SignUpRequest) error
+	Login(ctx context.Context, request memberships.LoginRequest) (string, error)
 }
 
 type Handler struct {
@@ -28,4 +29,5 @@ func (h *Handler) RegisterRoute() {
 	route := h.Group("memberships")
 	route.GET("/ping", h.Ping)
 	route.POST("/sign-up", h.SignUp)
+	route.POST("/login", h.Login)
 }

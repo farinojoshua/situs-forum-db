@@ -4,8 +4,11 @@ import (
 	"log"
 	"situs-forum/internal/configs"
 	"situs-forum/internal/handlers/memberships"
+	"situs-forum/internal/handlers/posts"
 	membershipRepo "situs-forum/internal/repository/memberships"
+	postRepo "situs-forum/internal/repository/posts"
 	membershipSvc "situs-forum/internal/service/memberships"
+	postSvc "situs-forum/internal/service/posts"
 	"situs-forum/pkg/internalsql"
 
 	"github.com/gin-gonic/gin"
@@ -38,11 +41,20 @@ func main() {
 		log.Fatal("gagal inisiasi db", err)
 	}
 
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
+
 	membershipRepo := membershipRepo.NewRepository(db)
+	postRepo := postRepo.NewRepository(db)
+
 	merbershipService := membershipSvc.NewService(cfg, membershipRepo)
+	postService := postSvc.NewService(cfg, postRepo)
 
 	membershipHandler := memberships.NewHandler(r, merbershipService)
+	postHandler := posts.NewHandler(r, postService)
+
 	membershipHandler.RegisterRoute()
+	postHandler.RegisterRoute()
 
 	r.Run(cfg.Service.Port)
 }

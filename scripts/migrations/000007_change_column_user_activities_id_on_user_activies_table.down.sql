@@ -1,0 +1,2 @@
+ALTER TABLE user_activities
+RENAME COLUMN user_activity_id to user_activities_id

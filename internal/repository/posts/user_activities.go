@@ -7,7 +7,7 @@ import (
 )
 
 func (r *repository) GetUserActivity(ctx context.Context, model posts.UserActivityModel) (*posts.UserActivityModel, error) {
-	query := `SELECT user_activity_id, post_id, user_id, is_liked, create_at, updated_at, created_by, updated_by FROM user_activities WHERE post_id = ? AND user_id = ?`
+	query := `SELECT user_activity_id, post_id, user_id, is_liked, created_at, updated_at, created_by, updated_by FROM user_activities WHERE post_id = ? AND user_id = ?`
 
 	row := r.db.QueryRowContext(ctx, query, model.PostID, model.UserID)
 

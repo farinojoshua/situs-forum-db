@@ -3,4 +3,4 @@ service:
   secretJWT: "situs-forum-fast-campus"
 
 database:
-  dataSourceName: "root:admin@tcp(localhost:3306)/situs-forum-db"
+  dataSourceName: "root:admin@tcp(localhost:3306)/situs-forum-db?parseTime=true"

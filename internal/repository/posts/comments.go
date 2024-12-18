@@ -15,3 +15,35 @@ func (r *repository) CreateComment(ctx context.Context, model posts.CommentModel
 
 	return nil
 }
+
+func (r *repository) GetCommentByPostID(ctx context.Context, postID int64) ([]posts.Comment, error) {
+	query := `SELECT c.comment_id, c.user_id, c.comment_content, u.username FROM comments c JOIN users u ON c.user_id = u.user_id WHERE c.post_id = ?`
+
+	rows, err := r.db.QueryContext(ctx, query, postID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	response := make([]posts.Comment, 0)
+	for rows.Next() {
+		var (
+			comment  posts.CommentModel
+			username string
+		)
+
+		err = rows.Scan(&comment.CommentID, &comment.UserID, &comment.CommentContent, &username)
+		if err != nil {
+			return nil, err
+		}
+
+		response = append(response, posts.Comment{
+			CommentID:      comment.CommentID,
+			UserID:         comment.UserID,
+			CommentContent: comment.CommentContent,
+			Username:       username,
+		})
+	}
+
+	return response, nil
+}

@@ -10,7 +10,7 @@ import (
 )
 
 func (s *service) SignUp(ctx context.Context, req memberships.SignUpRequest) error {
-	user, err := s.membershipsRepo.GetUser(ctx, req.Email)
+	user, err := s.membershipsRepo.GetUser(ctx, req.Email, req.Username, 0)
 	if err != nil {
 		return err
 	}

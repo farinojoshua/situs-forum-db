@@ -2,6 +2,7 @@ package memberships
 
 import (
 	"context"
+	"situs-forum/internal/middleware"
 	"situs-forum/internal/model/memberships"
 
 	"github.com/gin-gonic/gin"
@@ -9,7 +10,8 @@ import (
 
 type membershipService interface {
 	SignUp(ctx context.Context, request memberships.SignUpRequest) error
-	Login(ctx context.Context, request memberships.LoginRequest) (string, error)
+	Login(ctx context.Context, request memberships.LoginRequest) (string, string, error)
+	ValidateRefreshToken(ctx context.Context, userID int64, request memberships.RefreshTokenRequest) (string, error)
 }
 
 type Handler struct {
@@ -30,4 +32,8 @@ func (h *Handler) RegisterRoute() {
 	route.GET("/ping", h.Ping)
 	route.POST("/sign-up", h.SignUp)
 	route.POST("/login", h.Login)
+
+	routeRefresh := h.Group("memberships")
+	routeRefresh.Use(middleware.AuthRefreshMiddleware())
+	routeRefresh.POST("/refresh", h.Refresh)
 }

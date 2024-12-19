@@ -11,7 +11,7 @@ func CreateToken(id int64, username string, seckerKey string) (string, error) {
 		jwt.MapClaims{
 			"id":       id,
 			"username": username,
-			"exp":      time.Now().Add(10 * time.Minute).Unix(),
+			"exp":      time.Now().Add(1 * time.Minute).Unix(),
 		},
 	)
 
@@ -32,6 +32,28 @@ func ValidateToken(tokenStr, secretKey string) (int64, string, error) {
 	token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
 		return key, nil
 	})
+
+	if err != nil {
+		return 0, "", err
+	}
+
+	if !token.Valid {
+		return 0, "", err
+	}
+
+	id := int64(claims["id"].(float64))
+	username := claims["username"].(string)
+
+	return id, username, nil
+}
+
+func ValidateTokenWithoutExpiry(tokenStr, secretKey string) (int64, string, error) {
+	key := []byte(secretKey)
+	claims := jwt.MapClaims{}
+
+	token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
+		return key, nil
+	}, jwt.WithoutClaimsValidation())
 
 	if err != nil {
 		return 0, "", err

@@ -6,10 +6,10 @@ import (
 	"situs-forum/internal/model/memberships"
 )
 
-func (r *repository) GetUser(ctx context.Context, email string) (*memberships.UserModel, error) {
-	query := `SELECT user_id, email, username, password FROM users WHERE email = ?`
+func (r *repository) GetUser(ctx context.Context, email, username string, userID int64) (*memberships.UserModel, error) {
+	query := `SELECT user_id, email, username, password FROM users WHERE email = ? OR username = ? OR user_id = ?`
 
-	row := r.db.QueryRowContext(ctx, query, email)
+	row := r.db.QueryRowContext(ctx, query, email, username, userID)
 
 	var response memberships.UserModel
 	err := row.Scan(&response.UserID, &response.Email, &response.Username, &response.Password)
